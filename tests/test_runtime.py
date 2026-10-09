@@ -8,8 +8,8 @@ from homeassistant.components.device_automation import (
     async_get_device_automations,
 )
 from homeassistant.core import State
-from homeassistant.setup import async_setup_component
 from homeassistant.helpers import device_registry as dr
+from homeassistant.setup import async_setup_component
 from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import mock_restore_cache_with_extra_data
 
@@ -81,7 +81,9 @@ async def test_trigger_keeps_numeric_identity_after_rename(hass, room_entry, tra
     assert await hass.config_entries.async_unload(room_entry.entry_id)
 
 
-async def test_editor_discovers_virtual_device_triggers(hass, room_entry, transport, hass_ws_client):
+async def test_editor_discovers_virtual_device_triggers(
+    hass, room_entry, transport, hass_ws_client
+):
     await setup(hass, room_entry)
     assert await async_setup_component(hass, "device_automation", {})
     registry = dr.async_get(hass)
