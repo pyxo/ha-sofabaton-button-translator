@@ -4,7 +4,7 @@ Developed by **Pyxo**. A local MQTT custom integration for Home Assistant **2026
 
 ## Installation
 
-Version **1.0.0** is available for installation through HACS as a custom repository. Physical-device and live-broker acceptance testing remains pending; see [VALIDATION.md](VALIDATION.md).
+Version **1.0.1** adds power commands and continuous mapping editing. Install through HACS as a custom repository after the version is released. Physical-device and live-broker acceptance testing remains pending; see [VALIDATION.md](VALIDATION.md).
 
 Add `https://github.com/pyxo/ha-sofabaton-button-translator` to **HACS → Custom repositories**, category **Integration**, download it and restart Home Assistant. This is a custom repository, not a claim of inclusion in the HACS default catalog.
 
@@ -16,7 +16,7 @@ First configure Home Assistant's **MQTT** integration and arrange for your Sofab
 
 1. Open **Settings → Devices & services → Add integration → Sofabaton Button Translator**.
 2. Enter the MQTT ID manually, or select **Discover Remotes** and press buttons during the 15-second listening window. Discovery listens temporarily on `+/up`, validates button messages, and lists unconfigured hub IDs. You can return to manual entry. Cancelling discovery removes its subscription.
-3. Enter the room name and optional Default Device ID. Supplying an ID automatically creates **Default Remote** with all 66 built-in mappings. Leaving it blank creates no virtual device.
+3. Enter the room name and optional Default Device ID. Supplying an ID automatically creates **Default Remote** with all 68 built-in mappings. Leaving it blank creates no virtual device.
 4. Add more virtual devices and mappings, or choose **Finish setup** immediately. Each additional device begins with empty custom mappings.
 
 A room is a separate configuration entry, containing one hub. MQTT IDs are case-sensitive and unique across rooms. Device IDs are non-negative integers, unique within their room; the same ID in another room is allowed. Room names need not be unique. There is no imposed virtual-device count limit. The hub and configured virtual devices appear in the device registry, with virtual devices linked to their hub. Unconfigured devices emit events but do not create registry devices.
@@ -30,7 +30,7 @@ Use the integration entry's **Configure** menu:
 - **Change Default Device:** choose a configured device or no default. The selected device uses the shared, read-only built-in mappings. Its custom mappings remain stored and become active again when it is no longer the default.
 - **Manage Button Mappings:** choose a non-default device, then add/edit a mapping by key ID, delete one mapping, or clear all mappings after confirmation. Removing mappings never removes the device.
 
-Setup allows multiple edits before **Finish**. Each later Configure operation saves and closes the flow; reopen Configure for another operation. Changes reload only this room, without restarting Home Assistant. The previous MQTT subscription is removed and the new one installed. Commands during the brief reload gap may be missed.
+Setup allows multiple edits before **Finish**. Adding, editing, deleting, or clearing a mapping returns to the same device's mapping menu. During Configure, each mapping change saves immediately, so closing the dialog retains saved changes. Use **Back to menu** to select another device or setting. Other Configure operations save and close the flow. Changes reload only this room, without restarting Home Assistant. The previous MQTT subscription is removed and the new one installed. Commands during the brief reload gap may be missed.
 
 Permanent random room and hub IDs are created once and saved with the entry. Room/device/button names and MQTT IDs do not determine registry identity. Virtual-device identity uses the permanent hub ID plus numeric device ID. Changing names or MQTT routing preserves device automation references. Deleting a virtual device removes its registry entry and custom mappings; re-adding it is not guaranteed to repair old automations.
 
@@ -100,7 +100,7 @@ Each hub has one enabled-by-default diagnostic timestamp sensor, **Last Activity
 
 ## Default mappings
 
-The default device uses the exact 66 mappings supplied by Pyxo. They are packaged as one immutable constant; no `buttons.yaml` is required. Custom mappings are never overwritten by changing the default designation.
+The default device uses the 68 mappings supplied by Pyxo, including `67: power_on` and `68: power_off`. They are packaged as one immutable constant; no `buttons.yaml` is required. Custom mappings are never overwritten by changing the default designation.
 
 | Key | Button | Key | Button |
 | --- | --- | --- | --- |
@@ -137,6 +137,7 @@ The default device uses the exact 66 mappings supplied by Pyxo. They are package
 | 31 | `dvr` | 64 | `num_9` |
 | 32 | `dvr_long` | 65 | `num_dash` |
 | 33 | `guide` | 66 | `num_e` |
+| 67 | `power_on` | 68 | `power_off` |
 
 ## Troubleshooting
 

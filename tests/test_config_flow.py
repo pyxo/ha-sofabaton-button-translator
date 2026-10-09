@@ -52,7 +52,9 @@ async def test_manual_default_and_initial_custom_mapping(hass, mqtt_entry):
     await configure(hass, flow_id, next_step_id="mappings")
     await configure(hass, flow_id, device_id="2")
     await configure(hass, flow_id, next_step_id="set_mapping")
-    await configure(hass, flow_id, key_id="3", button_name="Apple TV 1")
+    result = await configure(hass, flow_id, key_id="3", button_name="Apple TV 1")
+    assert result["step_id"] == "mapping_menu"
+    await configure(hass, flow_id, next_step_id="menu")
     with patch(
         "custom_components.sofabaton_button_translator.async_setup_entry",
         AsyncMock(return_value=True),
@@ -63,7 +65,7 @@ async def test_manual_default_and_initial_custom_mapping(hass, mqtt_entry):
     assert result["data"]["devices"]["1"]["name"] == "Default Remote"
     assert result["data"]["devices"]["1"]["mappings"] == {}
     assert result["data"]["devices"]["2"]["mappings"] == {"3": "Apple TV 1"}
-    assert len(mappings(result["data"], 1)) == 66
+    assert len(mappings(result["data"], 1)) == 68
 
 
 async def test_no_default_duplicate_hub_and_finish_race(hass, mqtt_entry, room_entry):
@@ -189,6 +191,74 @@ async def test_mapping_edit_delete_clear_and_read_only(hass, room_entry):
         await flow.async_step_set_mapping({"key_id": "4", "button_name": "Kodi"})
         await flow.async_step_clear_mappings({"confirm": True})
         assert flow.data["devices"]["2"]["mappings"] == {}
+
+
+async def test_options_repeated_mapping_edits_save_and_keep_menu(hass, room_entry):
+    data = deepcopy(dict(room_entry.data))
+    data["devices"]["2"] = {"name": "Sources", "mappings": {}}
+    hass.config_entries.async_update_entry(room_entry, data=data)
+    result = await hass.config_entries.options.async_init(room_entry.entry_id)
+    flow_id = result["flow_id"]
+
+    async def edit(**values):
+        return await hass.config_entries.options.async_configure(flow_id, values)
+
+    await edit(next_step_id="mappings")
+    await edit(device_id="2")
+    for key, label in (("3", "Apple TV"), ("4", "Kodi"), ("3", "Apple TV renamed")):
+        before = deepcopy(dict(room_entry.data))
+        await edit(next_step_id="set_mapping")
+        result = await edit(key_id=key, button_name=label)
+        assert result["type"] == FlowResultType.MENU
+        assert result["step_id"] == "mapping_menu"
+        assert room_entry.data["devices"]["2"]["mappings"][key] == label
+        assert before != dict(room_entry.data)
+
+    await edit(next_step_id="delete_mapping")
+    result = await edit(key_id="3")
+    assert result["step_id"] == "mapping_menu"
+    assert room_entry.data["devices"]["2"]["mappings"] == {"4": "Kodi"}
+    await edit(next_step_id="clear_mappings")
+    result = await edit(confirm=False)
+    assert result["step_id"] == "mapping_menu"
+    assert room_entry.data["devices"]["2"]["mappings"] == {"4": "Kodi"}
+    await edit(next_step_id="clear_mappings")
+    result = await edit(confirm=True)
+    assert result["step_id"] == "mapping_menu"
+    assert room_entry.data["devices"]["2"]["mappings"] == {}
+
+    await edit(next_step_id="set_mapping")
+    await edit(key_id="7", button_name="Saved before closing")
+    await edit(next_step_id="menu")
+    hass.config_entries.options.async_abort(flow_id)
+    assert room_entry.data["devices"]["2"]["mappings"] == {"7": "Saved before closing"}
+    assert room_entry.data["devices"]["1"]["mappings"] == {}
+
+
+async def test_options_mapping_edits_detect_concurrent_changes(hass, room_entry):
+    data = deepcopy(dict(room_entry.data))
+    data["devices"]["2"] = {"name": "Sources", "mappings": {}}
+    hass.config_entries.async_update_entry(room_entry, data=data)
+    result = await hass.config_entries.options.async_init(room_entry.entry_id)
+    flow_id = result["flow_id"]
+    for values in (
+        {"next_step_id": "mappings"},
+        {"device_id": "2"},
+        {"next_step_id": "set_mapping"},
+        {"key_id": "3", "button_name": "Saved"},
+    ):
+        await hass.config_entries.options.async_configure(flow_id, values)
+    external = deepcopy(dict(room_entry.data))
+    external["room_name"] = "Changed elsewhere"
+    hass.config_entries.async_update_entry(room_entry, data=external)
+    await hass.config_entries.options.async_configure(flow_id, {"next_step_id": "set_mapping"})
+    result = await hass.config_entries.options.async_configure(
+        flow_id, {"key_id": "4", "button_name": "Must not overwrite"}
+    )
+    assert result["type"] == FlowResultType.ABORT
+    assert result["reason"] == "settings_changed"
+    assert room_entry.data["room_name"] == "Changed elsewhere"
+    assert room_entry.data["devices"]["2"]["mappings"] == {"3": "Saved"}
 
 
 async def test_discovery_progress_flow(hass, mqtt_entry, transport):

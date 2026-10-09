@@ -16,8 +16,9 @@ from custom_components.sofabaton_button_translator.model import (
 )
 
 
-def test_exact_66_mappings():
+def test_exact_68_mappings():
     expected = "up up_long down down_long left left_long right right_long ok ok_long return return_long home home_long menu menu_long volume_up volume_up_long volume_down volume_down_long mute mute_long channel_down channel_down_long channel_up channel_up_long rewind rewind_long fast_forward fast_forward_long dvr dvr_long guide guide_long exit exit_long play play_long pause pause_long a a_long b b_long c c_long red red_long green green_long yellow yellow_long blue blue_long num_0 num_1 num_2 num_3 num_4 num_5 num_6 num_7 num_8 num_9 num_dash num_e".split()
+    expected += ["power_on", "power_off"]
     assert dict(DEFAULT_BUTTONS) == dict(enumerate(expected, 1))
     with pytest.raises(TypeError):
         DEFAULT_BUTTONS[1] = "changed"
@@ -69,6 +70,8 @@ def test_event_contract_and_identity():
         "button",
     }
     assert event_data(data, 1, 1)["button"] == "up"
+    assert event_data(data, 1, 67)["button"] == "power_on"
+    assert event_data(data, 1, 68)["button"] == "power_off"
     assert event_data(data, 1, 999)["button"] is None
     assert event_data(data, 9, 1)["device_name"] is None
     assert event_data(data, 9, 1)["button"] is None

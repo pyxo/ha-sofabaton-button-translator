@@ -1,4 +1,4 @@
-"""The exact 66 Pyxo mappings; shared and immutable, never copied into settings."""
+"""The 68 Pyxo mappings; shared and immutable, never copied into settings."""
 
 from types import MappingProxyType
 
@@ -36,7 +36,7 @@ DEFAULT_BUTTONS = MappingProxyType(
         enumerate(
             [name for base in _NAMES for name in (base, f"{base}_long")]
             + [f"num_{n}" for n in range(10)]
-            + ["num_dash", "num_e"],
+            + ["num_dash", "num_e", "power_on", "power_off"],
             start=1,
         )
     )

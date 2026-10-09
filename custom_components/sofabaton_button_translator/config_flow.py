@@ -188,7 +188,7 @@ class Editor:
                 key = str(numeric_id(user_input["key_id"]))
                 label = name(user_input["button_name"])
                 self.editable_mappings()[key] = label
-                return await self.saved()
+                return await self.saved(return_to="mapping_menu")
             except ValueError as err:
                 errors["base"] = str(err)
         existing = self.data["devices"][self.selected]["mappings"]
@@ -214,7 +214,7 @@ class Editor:
             )
         if user_input is not None:
             choices.pop(user_input["key_id"], None)
-            return await self.saved()
+            return await self.saved(return_to="mapping_menu")
         return self.async_show_form(
             step_id="delete_mapping",
             data_schema=vol.Schema(
@@ -231,8 +231,8 @@ class Editor:
                     self.editable_mappings().clear()
                 except ValueError:
                     return self.async_abort(reason="read_only")
-                return await self.saved()
-            return await self.async_step_menu()
+                return await self.saved(return_to="mapping_menu")
+            return await self.async_step_mapping_menu()
         return self.async_show_form(
             step_id="clear_mappings",
             data_schema=vol.Schema(
@@ -360,8 +360,8 @@ class ConfigFlow(Editor, config_entries.ConfigFlow, domain=DOMAIN):
             ],
         )
 
-    async def saved(self):
-        return await self.async_step_menu()
+    async def saved(self, return_to="menu"):
+        return await getattr(self, f"async_step_{return_to}")()
 
     async def async_step_finish(self, user_input=None):
         # Recheck after the multi-step wizard in case another room was added.
@@ -412,14 +412,17 @@ class OptionsFlow(Editor, config_entries.OptionsFlow):
             ),
         )
 
-    async def saved(self):
+    async def saved(self, return_to=None):
         if dict(self.config_entry.data) != self.original_data:
             return self.async_abort(reason="settings_changed")
         if self.duplicate_mqtt(self.data["mqtt_id"]):
             return self.async_abort(reason="duplicate_mqtt")
         self.hass.config_entries.async_update_entry(
             self.config_entry,
-            data=self.data,
+            data=deepcopy(self.data),
             title=self.data["room_name"],
         )
+        if return_to is not None:
+            self.original_data = deepcopy(self.data)
+            return await getattr(self, f"async_step_{return_to}")()
         return self.async_create_entry(title="", data={})
