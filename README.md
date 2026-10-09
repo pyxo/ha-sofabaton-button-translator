@@ -170,7 +170,7 @@ python3.14 -m venv .venv
 .venv/bin/ruff format --check .
 ```
 
-Tests use the real Home Assistant 2026.10 runtime, config-flow manager, event bus, device/entity registries and sensor platform, with the MQTT transport mocked. CI runs the tests, Ruff, Home Assistant hassfest, and HACS repository validation. HACS brand validation is skipped because upstream brand registration is outside this repository.
+Tests use the real Home Assistant 2026.10 runtime, config-flow manager, event bus, device/entity registries and sensor platform, with the MQTT transport mocked. CI runs the tests, Ruff, Home Assistant hassfest, and HACS repository validation. HACS brand validation is skipped because upstream brand registration is outside this repository. The initial PR also has an expected HACS repository-license failure: GitHub has no license metadata for the empty default branch yet; the MIT license is included in the PR. See [VALIDATION.md](VALIDATION.md).
 
 Before a release, complete the hardware checklist in [VALIDATION.md](VALIDATION.md). Automated tests do not prove real remote behavior, broker reconnect delivery, browser rendering, or HACS installation/update/removal. The release workflow only runs when a maintainer deliberately pushes a matching version tag; creating this PR does not publish a release.
 
