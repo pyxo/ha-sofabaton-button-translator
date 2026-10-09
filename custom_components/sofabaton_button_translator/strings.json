@@ -1,0 +1,308 @@
+{
+  "title": "Sofabaton Button Translator",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Add Sofabaton Hub",
+        "menu_options": {
+          "manual": "Enter MQTT ID manually",
+          "discover": "Discover Remotes"
+        }
+      },
+      "manual": {
+        "title": "Hub settings",
+        "description": "Configure one hub for this room. Leave Default Device ID blank for no default; otherwise Default Remote is created automatically.",
+        "data": {
+          "room_name": "Room name",
+          "mqtt_id": "MQTT ID",
+          "default_device_id": "Default Device ID (optional)"
+        }
+      },
+      "discovery_failed": {
+        "title": "Discovery unavailable",
+        "description": "Check that MQTT is configured and connected, then retry or enter the ID manually.",
+        "menu_options": {
+          "manual": "Enter MQTT ID manually",
+          "discover": "Retry discovery"
+        }
+      },
+      "discovered": {
+        "title": "Select discovered hub",
+        "description": "Select a hub detected from valid button traffic, or enter its ID manually. Already configured hubs are excluded.",
+        "data": {
+          "mqtt_id": "MQTT ID"
+        }
+      },
+      "menu": {
+        "title": "Configure Sofabaton",
+        "menu_options": {
+          "devices": "Manage Virtual Devices",
+          "default": "Change Default Device",
+          "mappings": "Manage Button Mappings",
+          "finish": "Finish setup"
+        }
+      },
+      "devices": {
+        "title": "Manage Virtual Devices",
+        "menu_options": {
+          "add_device": "Add device",
+          "rename_device": "Rename device",
+          "remove_device": "Remove device",
+          "menu": "Back"
+        }
+      },
+      "add_device": {
+        "title": "Add virtual device",
+        "description": "Numeric device IDs are unique within this room. New devices have no custom mappings.",
+        "data": {
+          "device_id": "Device ID",
+          "device_name": "Device name"
+        }
+      },
+      "rename_device": {
+        "title": "Choose device to rename",
+        "data": {
+          "device_id": "Device"
+        }
+      },
+      "rename": {
+        "title": "Rename device",
+        "data": {
+          "device_name": "Device name"
+        }
+      },
+      "remove_device": {
+        "title": "Choose device to remove",
+        "data": {
+          "device_id": "Device"
+        }
+      },
+      "confirm_remove": {
+        "title": "Confirm device removal",
+        "description": "Remove {device}? Device automations referencing this device may stop working. Its custom mappings will be deleted. Unconfigured-device events will still be emitted.",
+        "data": {
+          "confirm": "Remove this virtual device"
+        }
+      },
+      "default": {
+        "title": "Change Default Device",
+        "description": "The default uses 66 read-only built-in mappings. Custom mappings stay stored and return when the device is no longer the default.",
+        "data": {
+          "device_id": "Default device"
+        }
+      },
+      "mappings": {
+        "title": "Choose custom device",
+        "description": "Default-device mappings are read-only and excluded from this list.",
+        "data": {
+          "device_id": "Device"
+        }
+      },
+      "mapping_menu": {
+        "title": "Manage Button Mappings",
+        "menu_options": {
+          "set_mapping": "Add or edit mapping",
+          "delete_mapping": "Delete mapping",
+          "clear_mappings": "Clear all mappings",
+          "menu": "Back"
+        }
+      },
+      "set_mapping": {
+        "title": "Add or edit mapping",
+        "description": "Enter an existing key ID to rename its button. Existing mappings: {mappings}",
+        "data": {
+          "key_id": "Key ID",
+          "button_name": "Button name"
+        }
+      },
+      "delete_mapping": {
+        "title": "Delete mapping",
+        "data": {
+          "key_id": "Button"
+        }
+      },
+      "clear_mappings": {
+        "title": "Clear Button Mappings",
+        "description": "Clear every custom mapping for this device? Numeric automation triggers continue to work.",
+        "data": {
+          "confirm": "Clear all mappings"
+        }
+      }
+    },
+    "progress": {
+      "discover": "Press buttons on your Sofabaton remote. Listening to MQTT traffic for 15 seconds\u2026"
+    },
+    "error": {
+      "invalid_id": "Enter a non-negative whole-number ID.",
+      "invalid_mqtt_id": "Enter a literal MQTT topic ID without /, +, # or a leading $.",
+      "invalid_name": "Enter a nonempty name.",
+      "duplicate_device": "This room already has that device ID.",
+      "duplicate_mqtt": "That MQTT ID is already configured in another room.",
+      "read_only": "Default mappings cannot be edited.",
+      "no_devices": "Add a virtual device first. Submit to return.",
+      "no_custom_devices": "Add a non-default virtual device to edit custom mappings. Submit to return.",
+      "no_mappings": "This device has no custom mappings. Submit to return."
+    },
+    "abort": {
+      "invalid_id": "Enter a non-negative whole-number ID.",
+      "invalid_mqtt_id": "Enter a literal MQTT topic ID without /, +, # or a leading $.",
+      "invalid_name": "Enter a nonempty name.",
+      "duplicate_device": "This room already has that device ID.",
+      "duplicate_mqtt": "That MQTT ID is already configured in another room.",
+      "read_only": "Default mappings cannot be edited.",
+      "mqtt_required": "Configure the Home Assistant MQTT integration first.",
+      "no_devices": "Add a virtual device first.",
+      "no_custom_devices": "Add a non-default virtual device to edit custom mappings.",
+      "invalid_device": "This virtual device is no longer configured.",
+      "no_mappings": "This device has no custom mappings.",
+      "settings_changed": "Settings changed in another window. Reopen Configure and try again."
+    }
+  },
+  "options": {
+    "step": {
+      "menu": {
+        "title": "Configure Sofabaton",
+        "menu_options": {
+          "room": "Room Settings",
+          "devices": "Manage Virtual Devices",
+          "default": "Change Default Device",
+          "mappings": "Manage Button Mappings"
+        }
+      },
+      "room": {
+        "title": "Room Settings",
+        "description": "Changing the MQTT ID updates the subscription. Permanent identities remain unchanged.",
+        "data": {
+          "room_name": "Room name",
+          "mqtt_id": "MQTT ID"
+        }
+      },
+      "devices": {
+        "title": "Manage Virtual Devices",
+        "menu_options": {
+          "add_device": "Add device",
+          "rename_device": "Rename device",
+          "remove_device": "Remove device",
+          "menu": "Back"
+        }
+      },
+      "add_device": {
+        "title": "Add virtual device",
+        "description": "Numeric device IDs are unique within this room. New devices have no custom mappings.",
+        "data": {
+          "device_id": "Device ID",
+          "device_name": "Device name"
+        }
+      },
+      "rename_device": {
+        "title": "Choose device to rename",
+        "data": {
+          "device_id": "Device"
+        }
+      },
+      "rename": {
+        "title": "Rename device",
+        "data": {
+          "device_name": "Device name"
+        }
+      },
+      "remove_device": {
+        "title": "Choose device to remove",
+        "data": {
+          "device_id": "Device"
+        }
+      },
+      "confirm_remove": {
+        "title": "Confirm device removal",
+        "description": "Remove {device}? Device automations referencing this device may stop working. Its custom mappings will be deleted. Unconfigured-device events will still be emitted.",
+        "data": {
+          "confirm": "Remove this virtual device"
+        }
+      },
+      "default": {
+        "title": "Change Default Device",
+        "description": "The default uses 66 read-only built-in mappings. Custom mappings stay stored and return when the device is no longer the default.",
+        "data": {
+          "device_id": "Default device"
+        }
+      },
+      "mappings": {
+        "title": "Choose custom device",
+        "description": "Default-device mappings are read-only and excluded from this list.",
+        "data": {
+          "device_id": "Device"
+        }
+      },
+      "mapping_menu": {
+        "title": "Manage Button Mappings",
+        "menu_options": {
+          "set_mapping": "Add or edit mapping",
+          "delete_mapping": "Delete mapping",
+          "clear_mappings": "Clear all mappings",
+          "menu": "Back"
+        }
+      },
+      "set_mapping": {
+        "title": "Add or edit mapping",
+        "description": "Enter an existing key ID to rename its button. Existing mappings: {mappings}",
+        "data": {
+          "key_id": "Key ID",
+          "button_name": "Button name"
+        }
+      },
+      "delete_mapping": {
+        "title": "Delete mapping",
+        "data": {
+          "key_id": "Button"
+        }
+      },
+      "clear_mappings": {
+        "title": "Clear Button Mappings",
+        "description": "Clear every custom mapping for this device? Numeric automation triggers continue to work.",
+        "data": {
+          "confirm": "Clear all mappings"
+        }
+      }
+    },
+    "error": {
+      "invalid_id": "Enter a non-negative whole-number ID.",
+      "invalid_mqtt_id": "Enter a literal MQTT topic ID without /, +, # or a leading $.",
+      "invalid_name": "Enter a nonempty name.",
+      "duplicate_device": "This room already has that device ID.",
+      "duplicate_mqtt": "That MQTT ID is already configured in another room.",
+      "read_only": "Default mappings cannot be edited.",
+      "no_devices": "Add a virtual device first. Submit to return.",
+      "no_custom_devices": "Add a non-default virtual device to edit custom mappings. Submit to return.",
+      "no_mappings": "This device has no custom mappings. Submit to return."
+    },
+    "abort": {
+      "invalid_id": "Enter a non-negative whole-number ID.",
+      "invalid_mqtt_id": "Enter a literal MQTT topic ID without /, +, # or a leading $.",
+      "invalid_name": "Enter a nonempty name.",
+      "duplicate_device": "This room already has that device ID.",
+      "duplicate_mqtt": "That MQTT ID is already configured in another room.",
+      "read_only": "Default mappings cannot be edited.",
+      "mqtt_required": "Configure the Home Assistant MQTT integration first.",
+      "no_devices": "Add a virtual device first.",
+      "no_custom_devices": "Add a non-default virtual device to edit custom mappings.",
+      "invalid_device": "This virtual device is no longer configured.",
+      "no_mappings": "This device has no custom mappings.",
+      "settings_changed": "Settings changed in another window. Reopen Configure and try again."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "last_activity": {
+        "name": "Last Activity"
+      }
+    }
+  },
+  "device_automation": {
+    "trigger_type": {
+      "button_pressed": "Button pressed or held"
+    },
+    "extra_fields": {
+      "key_id": "Button / raw key ID"
+    }
+  }
+}
