@@ -4,9 +4,9 @@ Developed by **Pyxo**. A local MQTT custom integration for Home Assistant **2026
 
 ## Installation
 
-This initial implementation is pending PR review and hardware acceptance. Until merged, use the PR's feature branch for manual testing; the default branch is only a review base. No release has been published.
+Version **1.0.0** is available for installation through HACS as a custom repository. Physical-device and live-broker acceptance testing remains pending; see [VALIDATION.md](VALIDATION.md).
 
-After merge, add `https://github.com/pyxo/ha-sofabaton-button-translator` to **HACS → Custom repositories**, category **Integration**, download it and restart Home Assistant. This is a custom repository, not a claim of inclusion in the HACS default catalog.
+Add `https://github.com/pyxo/ha-sofabaton-button-translator` to **HACS → Custom repositories**, category **Integration**, download it and restart Home Assistant. This is a custom repository, not a claim of inclusion in the HACS default catalog.
 
 For manual installation, copy `custom_components/sofabaton_button_translator` into your Home Assistant configuration's `custom_components` directory and restart. This integration uses Home Assistant 2026.10 APIs; older versions are not supported.
 
@@ -170,7 +170,7 @@ python3.14 -m venv .venv
 .venv/bin/ruff format --check .
 ```
 
-Tests use the real Home Assistant 2026.10 runtime, config-flow manager, event bus, device/entity registries and sensor platform, with the MQTT transport mocked. CI runs the tests, Ruff, Home Assistant hassfest, and HACS repository validation. HACS brand validation is skipped because upstream brand registration is outside this repository. The initial PR also has an expected HACS repository-license failure: GitHub has no license metadata for the empty default branch yet; the MIT license is included in the PR. See [VALIDATION.md](VALIDATION.md).
+Tests use the real Home Assistant 2026.10 runtime, config-flow manager, event bus, device/entity registries and sensor platform, with the MQTT transport mocked. CI runs the tests, Ruff, Home Assistant hassfest, and HACS repository validation. HACS brand validation is skipped because upstream brand registration is outside this repository.
 
 Before a release, complete the hardware checklist in [VALIDATION.md](VALIDATION.md). Automated tests do not prove real remote behavior, broker reconnect delivery, browser rendering, or HACS installation/update/removal. The release workflow only runs when a maintainer deliberately pushes a matching version tag; creating this PR does not publish a release.
 

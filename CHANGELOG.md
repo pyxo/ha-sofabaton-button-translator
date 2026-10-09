@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.0 — Unreleased
+## 1.0.0 — 2026-10-09
 
 - UI configuration for one MQTT hub per room, manual entry and bounded traffic discovery.
 - Permanent room and hub IDs; virtual-device add/rename/removal with confirmation.
@@ -10,4 +10,4 @@
 - Restored diagnostic Last Activity timestamp sensor.
 - HACS metadata, English translations, tests, CI, documentation and AI disclosure.
 
-Hardware acceptance and release publication remain maintainer steps after PR review.
+Initial release for HACS custom-repository installation. Physical-device and live-broker acceptance remain pending.
