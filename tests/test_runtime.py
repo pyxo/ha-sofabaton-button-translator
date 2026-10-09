@@ -3,7 +3,12 @@
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
+from homeassistant.components.device_automation import (
+    DeviceAutomationType,
+    async_get_device_automations,
+)
 from homeassistant.core import State
+from homeassistant.setup import async_setup_component
 from homeassistant.helpers import device_registry as dr
 from homeassistant.util import dt as dt_util
 from pytest_homeassistant_custom_component.common import mock_restore_cache_with_extra_data
@@ -73,6 +78,39 @@ async def test_trigger_keeps_numeric_identity_after_rename(hass, room_entry, tra
     await hass.async_block_till_done()
     assert action.call_count == 1
     detach()
+    assert await hass.config_entries.async_unload(room_entry.entry_id)
+
+
+async def test_editor_discovers_virtual_device_triggers(hass, room_entry, transport, hass_ws_client):
+    await setup(hass, room_entry)
+    assert await async_setup_component(hass, "device_automation", {})
+    registry = dr.async_get(hass)
+    device = registry.async_get_device_by_identifier(
+        (DOMAIN, device_identifier(room_entry.data, 1)), room_entry.entry_id
+    )
+    discovered = await async_get_device_automations(hass, DeviceAutomationType.TRIGGER, [device.id])
+    triggers = [trigger for trigger in discovered[device.id] if trigger["domain"] == DOMAIN]
+    assert len(triggers) == 1
+    assert triggers[0]["type"] == "button_pressed"
+
+    client = await hass_ws_client(hass)
+    await client.send_json(
+        {"id": 1, "type": "device_automation/trigger/list", "device_id": device.id}
+    )
+    response = await client.receive_json()
+    assert response["success"], response
+    assert any(trigger["domain"] == DOMAIN for trigger in response["result"])
+    await client.send_json(
+        {"id": 2, "type": "device_automation/trigger/capabilities", "trigger": triggers[0]}
+    )
+    response = await client.receive_json()
+    assert response["success"], response
+    fields = response["result"]["extra_fields"]
+    assert len(fields) == 1
+    assert fields[0]["name"] == "key_id"
+    options = fields[0]["selector"]["select"]["options"]
+    assert {"value": "67", "label": "power_on (67)"} in options
+    assert {"value": "68", "label": "power_off (68)"} in options
     assert await hass.config_entries.async_unload(room_entry.entry_id)
 
 
