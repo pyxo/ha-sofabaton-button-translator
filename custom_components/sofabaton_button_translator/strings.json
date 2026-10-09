@@ -301,12 +301,8 @@
     "trigger_type": {
       "button_pressed": "Button pressed or held"
     },
-    "trigger": {
-      "button_pressed": {
-        "data": {
-          "key_id": "Button / raw key ID"
-        }
-      }
+    "extra_fields": {
+      "key_id": "Button / raw key ID"
     }
   }
 }
