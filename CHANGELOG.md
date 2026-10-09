@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1 — 2026-10-09
+
+- Add default commands `67: power_on` and `68: power_off`, bringing the built-in set to 68 mappings.
+- Return to the selected device's mapping menu after adding, editing, deleting, or clearing mappings. Configure saves each change immediately and allows repeated edits without reopening the dialog.
+
 ## 1.0.0 — 2026-10-09
 
 - UI configuration for one MQTT hub per room, manual entry and bounded traffic discovery.
